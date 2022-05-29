@@ -74,7 +74,7 @@ void main() {
     gl_FragData[1] = vec4(vec3(dist), alpha);
     gl_FragData[2] = vec4(vec3(dist), isWater);
 
-    vec2 offset = getOffset(clipPos_prev, viewWidth, viewHeight);
+    vec2 offset = getOffset(clipPos_prev);
     gl_FragData[3] = vec4(offset, 0, alpha);
 }
 
