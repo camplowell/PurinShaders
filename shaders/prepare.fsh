@@ -39,7 +39,7 @@ void main() {
     vec2 screenPos_prev = (clipPos_prev.xy / clipPos_prev.w);
     vec2 offset = getOffset(clipPos_prev);
     
-    gl_FragData[0] = vec4(skyColor, 1.0);
+    gl_FragData[0] = vec4(0.5 * skyColor, 1.0);
     gl_FragData[1] = vec4(offset, 0, 1.0);
 }
 

@@ -9,10 +9,10 @@
 const int colortex0Format = RGB16;
 // Colortex1: primary depth
 const int colortex1Format = R32F;
-const vec4 colortex1ClearColor = vec4(1024, 1024, 1024, 1024);
+const vec4 colortex1ClearColor = vec4(2048, 2048, 2048, 2048);
 // Colortex2: water depth
 const int colortex2Format = R32F;
-const vec4 colortex2ClearColor = vec4(1024, 1024, 1024, 1024);
+const vec4 colortex2ClearColor = vec4(2048, 2048, 2048, 2048);
 // Colortex3: velocity
 const int colortex3Format = RG16F;
 // Colortex5: history

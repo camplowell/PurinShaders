@@ -10,7 +10,7 @@ vec4 panini(vec3 viewPos, vec3 upPosition) {
     return view2clip(viewPos);
 }
 
-vec3 inversePanini(vec3 paniniPos) {
+vec3 paniniInverse(vec3 paniniPos) {
     return ndc2view(paniniPos);
 }
 

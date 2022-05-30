@@ -47,7 +47,7 @@ uniform sampler2D noisetex;
 /* RENDERTARGETS: 0,1,2,3 */ 
 
 void main() {
-    vec4 albedo = texture(tex, texcoord) * glcolor;
+    vec4 albedo = texture(tex, texcoord) * vec4(1, 1, 1, glcolor.a);
     float dist = length(viewPos);
     if (viewPos.z > -near || albedo.a == 0) {
         discard;
@@ -59,9 +59,11 @@ void main() {
     float alpha = albedo.a >= threshold ? 1.0 : 0.0;
     float isWater = int(blockId + 0.5) == 257 ? 1.0 : 0.0;
     if (int(blockId + 0.5) == 257) {
-        float waterFac = 6.0 * (albedo.r - 0.15);
+        float waterFac = clamp((albedo.r - 0.5) / 0.5, 0, 1);
         alpha = waterFac > threshold ? 1.0 : 0.0;
-        albedo.rgb = mix(albedo.rgb, vec3(1.0),  clamp(waterFac, 0, 1));
+        albedo.rgb = mix(albedo.rgb * glcolor.rgb, vec3(1.0),  waterFac);
+    } else {
+        albedo.rgb *= glcolor.rgb;
     }
 
     vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal);

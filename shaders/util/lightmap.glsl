@@ -5,9 +5,31 @@
 // Large
 // ===============================================================================================
 
+float getHorizonFac(int worldTime) {
+    float phase = fract((worldTime + 1000) / 12000.0);
+    float fac = 2 * abs(phase - 0.5);
+    return smoothstep(0, 1, fac * fac);
+}
+
+float _mixByTime(float dawn, float noon, float dusk, float night, int worldTime) {
+    return mix(
+        worldTime > 11000 && worldTime < 23000 ? night : noon,
+        worldTime > 5000 && worldTime < 17000 ? dusk : dawn,
+        getHorizonFac(worldTime));
+}
+
+vec3 _mixByTime(vec3 dawn, vec3 noon, vec3 dusk, vec3 night, int worldTime) {
+    return mix(
+        worldTime > 11000 && worldTime < 23000 ? night : noon,
+        worldTime > 5000 && worldTime < 17000 ? dusk : dawn,
+        getHorizonFac(worldTime));
+}
+
+#define mixByTime(param, worldTime) _mixByTime(param ## _DAWN, param ## _NOON, param ## _DUSK, param ## _NGHT, worldTime)
+
 vec3 getSkyLight(vec3 skyColor, float strength) {
     float skyMax = max(skyColor.r, max(skyColor.g, skyColor.b));
-    return pow(max(skyColor, 0.01), vec3(1.0 - skyMax * strength)) * strength;
+    return pow(max(skyColor, 0.001), 2.0 * vec3(1.0 - skyMax * strength)) * strength;
 }
 
 vec3 lm2rgb(
@@ -22,7 +44,7 @@ vec3 lm2rgb(
     return (
           TORCH_COL * adjustedLm.r
         + getSkyLight(skyColor, adjustedLm.g)
-        + AMBIENT_COL * adjustedAO * inversesqrt(0.125 * dist + 1));
+        + AMBIENT_COL * AMBIENT_VAL * adjustedAO * inversesqrt(0.0625 * dist + 1));
 }
 
 // Small -----------------------------------------------------------------------------------------
