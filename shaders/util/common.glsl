@@ -25,6 +25,8 @@ const bool colortex5Clear = false;
 
 #include "/settings/color.glsl"
 #include "/settings/distortion.glsl"
+#include "/settings/taa.glsl"
+#include "/settings/atmospherics.glsl"
 
 // ===============================================================================================
 // Uniforms

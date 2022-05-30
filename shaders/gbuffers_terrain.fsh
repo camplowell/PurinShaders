@@ -27,6 +27,7 @@ uniform sampler2D tex;
 #include "/util/common.glsl"
 #include "/util/lightmap.glsl"
 #include "/util/taa.glsl"
+#include "/util/distanceFade.glsl"
 #include "/surface/diffuse.glsl"
 
 // ===============================================================================================
@@ -44,6 +45,7 @@ void main() {
         discard;
     }
     float dist = length(viewPos);
+    distanceFade(dist);
     vec4 albedo = texture(tex, texcoord) * glcolor;
     vec3 lightmap = lm2rgb(lmcoord, ao, skyColor, dist);
 

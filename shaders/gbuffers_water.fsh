@@ -32,6 +32,7 @@ uniform sampler2D noisetex;
 #include "/util/common.glsl"
 #include "/util/lightmap.glsl"
 #include "/util/taa.glsl"
+#include "/util/distanceFade.glsl"
 #include "/util/stochastic_transparency.glsl"
 #include "/surface/diffuse.glsl"
 
@@ -51,9 +52,8 @@ void main() {
     if (viewPos.z > -near || albedo.a == 0) {
         discard;
     }
+    distanceFade(dist);
     vec3 lightmap = lm2rgb(lmcoord, ao, skyColor, dist);
-
-    
 
     float threshold = getThreshold(noisetex, alphaOff, frameCounter);
     float alpha = albedo.a >= threshold ? 1.0 : 0.0;

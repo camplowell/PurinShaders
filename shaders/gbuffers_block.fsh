@@ -30,6 +30,7 @@ uniform sampler2D noisetex;
 #include "/util/common.glsl"
 #include "/util/lightmap.glsl"
 #include "/util/taa.glsl"
+#include "/util/distanceFade.glsl"
 #include "/util/stochastic_transparency.glsl"
 #include "/surface/diffuse.glsl"
 
@@ -45,6 +46,7 @@ uniform sampler2D noisetex;
 
 void main() {
     float dist = length(viewPos);
+    distanceFade(dist);
     vec4 albedo = texture(tex, texcoord) * glcolor;
     vec3 lightmap = lm2rgb(lmcoord, 1.0, skyColor, dist);
     

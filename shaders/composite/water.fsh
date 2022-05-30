@@ -6,23 +6,23 @@
 // ===============================================================================================
 
 in  vec2 texcoord;
-in  vec4 glcolor;
 
 // Uniforms --------------------------------------------------------------------------------------
 
-uniform vec3 skyColor;
-uniform sampler2D tex;
+uniform sampler2D colortex0;
+uniform sampler2D colortex1;
+uniform sampler2D colortex2;
 
-uniform vec3 upPosition;
+uniform vec3 skyColor;
+
+uniform int isEyeInWater;
 
 // ===============================================================================================
 // Imports
 // ===============================================================================================
 
 #include "/util/common.glsl"
-#include "/util/panini.glsl"
-#include "/util/taa.glsl"
-#include "/util/distanceFade.glsl"
+#include "/util/lightmap.glsl"
 
 // ===============================================================================================
 // Functions
@@ -32,29 +32,23 @@ uniform vec3 upPosition;
 
 // Main ------------------------------------------------------------------------------------------
 
-/* RENDERTARGETS: 0,1,3 */ 
+/* RENDERTARGETS: 0 */ 
 
 void main() {
-    vec3 screenPos = gl_FragCoord.xyz / vec3(viewWidth, viewHeight, 1.0);
-    vec3 ndc = screen2ndc(screenPos);
-    vec3 viewPos = paniniInverse(ndc, upPosition);
-    float dist = length(viewPos);
-    distanceFade(dist);
-    /*
-    if (viewPos.z > -near) {
-        discard;
+    vec3 col = texelFetch(colortex0, ivec2(gl_FragCoord.xy), 0).rgb;
+    float depth = texelFetch(colortex1, ivec2(gl_FragCoord.xy), 0).x;
+    float waterDepth = texelFetch(colortex2, ivec2(gl_FragCoord.xy), 0).x;
+    float opticalDepth = 0.0;
+    if (isEyeInWater == 0 && waterDepth < depth) {
+        opticalDepth = 0.0625 * (depth - waterDepth + 4);
+    } else if (isEyeInWater == 1) {
+        opticalDepth = 0.0625 * min(depth, waterDepth);
     }
-    */
-    vec4 albedo = texture(tex, texcoord) * glcolor;
-
-    gl_FragData[0] = albedo;
-    gl_FragData[1] = vec4(vec3(length(viewPos)), albedo.a > 0.5);
-
-    vec3 viewPos_prev = view2prev(viewPos);
-    vec4 clipPos_prev = panini(viewPos_prev, upPosition);
-    vec2 offset = getOffset(clipPos_prev);
+    vec3 absorption = pow(vec3(0.4, 0.8, 0.9), vec3(opticalDepth));
+    vec3 scattering = vec3(0.05, 0.1, 0.2) * (1.0 - exp(-opticalDepth));
+    col = col * absorption + scattering * getSkyLight(skyColor, 1.0);
     
-    gl_FragData[2] = vec4(offset, 0, 1);
+    gl_FragData[0] = vec4(col, 1.0);
 }
 
 // Helper implementations ------------------------------------------------------------------------
