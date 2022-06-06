@@ -4,6 +4,7 @@
 
 #include "/util/common.glsl"
 #include "/util/panini.glsl"
+#include "/util/taa.glsl"
 
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 48) out;
@@ -58,7 +59,7 @@ void main() {
         fac = mix(start, stop, fac);
         // Spawn vertices
         vec3 viewPos = mix(pos[0], pos[2 - i % 2], fac);
-        gl_Position =  panini(viewPos, upPosition);
+        gl_Position =  jitter(panini(viewPos, upPosition));
         texcoord = mix(vertex[0].texcoord, vertex[2 - i % 2].texcoord, fac);
         glcolor = mix(vertex[0].glcolor, vertex[2 - i % 2].glcolor, fac);
         EmitVertex();

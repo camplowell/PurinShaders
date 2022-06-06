@@ -15,9 +15,15 @@ out float ao;
 out vec3 viewPos;
 out vec4 clipPos_prev;
 
+in vec3 mc_Entity;
+in vec2 mc_midTexCoord;
+
 // Uniforms --------------------------------------------------------------------------------------
 
 uniform vec3 upPosition;
+
+uniform float frameTimeCounter;
+uniform float frameTime;
 
 // ===============================================================================================
 // Imports
@@ -26,6 +32,7 @@ uniform vec3 upPosition;
 #include "/util/common.glsl"
 #include "/util/panini.glsl"
 #include "/util/taa.glsl"
+#include "/util/wavyLeaves.glsl"
 
 // ===============================================================================================
 // Functions
@@ -37,14 +44,26 @@ uniform vec3 upPosition;
 
 void main() {
     viewPos = model2view();
-    vec3 viewPos_prev = view2prev(viewPos);
-    clipPos_prev = panini(viewPos_prev, upPosition);
-    gl_Position = panini(viewPos, upPosition);
-    gl_Position = jitter(gl_Position);
+    vec3 feetPos = view2feet(viewPos);
+    vec3 feetPos_prev = feet2prev(feetPos);
 
     texcoord = modelTexcoord();
     glcolor = vec4(gl_Color.rgb, 1.0);
     ao = gl_Color.a;
+
+    // Wavy blocks
+    feetPos = wave(feetPos, frameTimeCounter, texcoord, mc_midTexCoord, mc_Entity);
+    feetPos_prev = wave(feetPos_prev, frameTimeCounter - frameTime, texcoord, mc_midTexCoord, mc_Entity);
+
+    // Bring back to view space
+    viewPos = feet2view(feetPos);
+    vec3 viewPos_prev = feet2view(feetPos_prev, gbufferPreviousModelView);
+
+    clipPos_prev = panini(viewPos_prev, upPosition);
+    gl_Position = panini(viewPos, upPosition);
+    gl_Position = jitter(gl_Position);
+
+    
 
     lmcoord = modelLmcoord();
     normal = view2eye(modelNormal());

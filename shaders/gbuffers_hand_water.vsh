@@ -42,8 +42,8 @@ uniform vec3 upPosition;
 void main() {
     viewPos = model2view();
     vec3 viewPos_prev = viewPos - at_velocity;
-    gl_Position = view2clip(viewPos);
-    clipPos_prev = view2clip(viewPos_prev);
+    gl_Position = view2clip(viewPos, gl_ProjectionMatrix);
+    clipPos_prev = view2clip(viewPos_prev, gl_ProjectionMatrix);
     gl_Position = jitter(gl_Position);
 
     texcoord = modelTexcoord();
