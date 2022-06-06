@@ -52,7 +52,6 @@ void main() {
     if (viewPos.z > -near || albedo.a == 0) {
         discard;
     }
-    distanceFade(dist);
     vec3 lightmap = lm2rgb(lmcoord, ao, skyColor, dist);
 
     float threshold = getThreshold(noisetex, alphaOff, frameCounter);
@@ -68,9 +67,9 @@ void main() {
 
     vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal);
 
-    if (alpha == 0.0 && isWater == 0.0) {
-        discard;
-    }
+    float fade = distanceFade(dist);
+    alpha *= fade;
+    isWater *= fade;
 
     gl_FragData[0] = vec4(col, alpha);
     gl_FragData[1] = vec4(vec3(dist), alpha);

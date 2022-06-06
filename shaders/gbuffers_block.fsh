@@ -46,14 +46,13 @@ uniform sampler2D noisetex;
 
 void main() {
     float dist = length(viewPos);
-    distanceFade(dist);
     vec4 albedo = texture(tex, texcoord) * glcolor;
     vec3 lightmap = lm2rgb(lmcoord, 1.0, skyColor, dist);
     
     vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal);
 
     float threshold = getThreshold(noisetex, alphaOffset, frameCounter);
-    float alpha = albedo.a > threshold ? 1.0 : 0.0;
+    float alpha = albedo.a > threshold ? distanceFade(dist) : 0.0;
 
     gl_FragData[0] = vec4(col, alpha);
     gl_FragData[1] = vec4(vec3(dist), alpha);

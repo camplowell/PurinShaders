@@ -45,9 +45,10 @@ void main() {
         discard;
     }
     float dist = length(viewPos);
-    distanceFade(dist);
     vec4 albedo = texture(tex, texcoord) * glcolor;
     vec3 lightmap = lm2rgb(lmcoord, ao, skyColor, dist);
+    
+    albedo.a *= distanceFade(dist);
 
     vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal);
 

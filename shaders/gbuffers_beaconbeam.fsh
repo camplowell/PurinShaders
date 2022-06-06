@@ -39,13 +39,14 @@ void main() {
     vec3 ndc = screen2ndc(screenPos);
     vec3 viewPos = paniniInverse(ndc, upPosition);
     float dist = length(viewPos);
-    distanceFade(dist);
     /*
     if (viewPos.z > -near) {
         discard;
     }
     */
     vec4 albedo = texture(tex, texcoord) * glcolor;
+
+    albedo.a *= distanceFade(dist);
 
     gl_FragData[0] = albedo;
     gl_FragData[1] = vec4(vec3(length(viewPos)), albedo.a > 0.5);

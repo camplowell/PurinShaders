@@ -1,16 +1,22 @@
+#if !defined DISTANCEFADE
+#define DISTANCEFADE
+
 float sharpstep(float x) {
   // Evaluate polynomial
   return x+(x-(x*x*(3-2*x)));
 }
 
-void distanceFade(float dist) {
+float distanceFade(float dist) {
     float cullFac = r2_grid(ivec2(gl_FragCoord.xy), frameCounter);
     cullFac = sharpstep(cullFac); //smootherstep(cullFac);
     if (dist > (far - (FADE_SIZE * cullFac))) {
-        discard;
+        return 0.0;
     }
+    return 1.0;
 }
 
-void distanceFade(vec3 viewPos) {
-    distanceFade(length(viewPos));
+float distanceFade(vec3 viewPos) {
+    return distanceFade(length(viewPos));
 }
+
+#endif

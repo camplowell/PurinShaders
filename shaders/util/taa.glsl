@@ -1,5 +1,5 @@
-#if !defined TEMPLATE
-#define TEMPLATE
+#if !defined TAA
+#define TAA
 
 // ===============================================================================================
 // Large

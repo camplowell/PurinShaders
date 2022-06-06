@@ -53,7 +53,7 @@ void main() {
         }
     }
     clip_origin /= samples;
-    clip_extent = sqrt(clip_extent / samples - clip_origin * clip_origin);
+    clip_extent = 0.5 * sqrt(clip_extent / samples - clip_origin * clip_origin);
     
     // Fetch history color
     vec3 col = texture(colortex0, unjittered).rgb;
