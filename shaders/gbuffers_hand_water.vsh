@@ -10,7 +10,6 @@ out vec4 glcolor;
 
 out vec2 lmcoord;
 out vec3 normal;
-out float ao;
 
 out vec3 viewPos;
 out vec3 viewPos_prev;
@@ -48,8 +47,7 @@ void main() {
     gl_Position = jitter(gl_Position);
 
     texcoord = modelTexcoord();
-    glcolor = vec4(gl_Color.rgb, 1.0);
-    ao = gl_Color.a;
+    glcolor = gl_Color;
 
     lmcoord = modelLmcoord();
     vec3 viewNormal = modelNormal();

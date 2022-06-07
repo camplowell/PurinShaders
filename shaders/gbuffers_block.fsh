@@ -49,8 +49,9 @@ void main() {
     float dist = length(viewPos);
     vec4 albedo = texture(tex, texcoord) * glcolor;
     vec3 lightmap = lm2rgb(lmcoord, 1.0, skyColor, dist);
+    vec3 ambient = getAmbient(dist, 1.0);
     
-    vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal);
+    vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal, ambient);
 
     float threshold = getThreshold(noisetex, alphaOffset, frameCounter);
     float alpha = albedo.a > threshold ? distanceFade(dist) : 0.0;

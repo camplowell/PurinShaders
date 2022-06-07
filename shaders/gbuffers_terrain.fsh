@@ -48,10 +48,11 @@ void main() {
     float dist = length(viewPos);
     vec4 albedo = texture(tex, texcoord) * glcolor;
     vec3 lightmap = lm2rgb(lmcoord, ao, skyColor, dist);
+    vec3 ambient = getAmbient(dist, ao);
     
     albedo.a *= distanceFade(dist);
 
-    vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal);
+    vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal, ambient);
 
     gl_FragData[0] = vec4(col, albedo.a);
     gl_FragData[1] = vec4(vec3(dist), albedo.a);

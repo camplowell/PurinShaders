@@ -29,7 +29,7 @@ vec3 _mixByTime(vec3 dawn, vec3 noon, vec3 dusk, vec3 night, int worldTime) {
 
 vec3 getSkyLight(vec3 skyColor, float strength) {
     float skyMax = max(skyColor.r, max(skyColor.g, skyColor.b));
-    return pow(max(skyColor, 0.001), 2.0 * vec3(1.0 - skyMax * strength)) * strength;
+    return pow(max(skyColor, 0.001), vec3(1.0 - skyMax * strength)) * strength;
 }
 
 vec3 lm2rgb(
@@ -43,8 +43,12 @@ vec3 lm2rgb(
     adjustedLm *= adjustedLm * vec2(1, adjustedAO);
     return (
           TORCH_COL * adjustedLm.r
-        + getSkyLight(skyColor, adjustedLm.g)
-        + AMBIENT_COL * AMBIENT_VAL * adjustedAO * inversesqrt(0.0625 * dist + 1));
+        + getSkyLight(skyColor, adjustedLm.g));
+}
+
+vec3 getAmbient(float dist, float ao) {
+    float adjustedAO = ao * 0.125 + 0.875;
+    return AMBIENT_COL * AMBIENT_VAL * adjustedAO * (32.0 / (dist + 32.0));
 }
 
 // Small -----------------------------------------------------------------------------------------

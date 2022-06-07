@@ -43,8 +43,9 @@ void main() {
     float depth = length(viewPos);
     vec4 albedo = texture(tex, texcoord) * glcolor;
     vec3 lightmap = lm2rgb(lmcoord, 1.0, skyColor, depth);
+    vec3 ambient = getAmbient(depth, 1.0);
 
-    vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal);
+    vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal, ambient);
 
     gl_FragData[0] = vec4(col, albedo.a);
     gl_FragData[1] = vec4(vec3(depth), albedo.a);

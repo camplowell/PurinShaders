@@ -118,13 +118,12 @@ vec3 screen(vec3 albedo, vec3 lighting, vec3 fac) {
     lighting *= 1.0 - fac;
     float lum = dot(lighting, vec3(0.299, 0.587, 0.114));
     return (lighting * lum + albedo) / (1 + lum * lum);
-    //return 1 - ((1 - albedo * fac) / (1.0 + lighting * (1.0 - fac)));
 }
 
 vec3 skyFog(vec3 col, vec3 skyLight, vec3 viewDir, float enter, float exit) {
     // Trim depth
-    if (eyeAltitude > 63 && exit >= far && viewDir.y < 0) {
-        exit = min(exit, (63 - eyeAltitude) / viewDir.y);
+    if (exit >= far && viewDir.y < 0) {
+        exit = min(exit, min((63 - eyeAltitude), -2.0) / viewDir.y);
     }
     float depth = (exit - enter);
     // Calculate the elevations of ray endpoints

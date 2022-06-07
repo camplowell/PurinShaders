@@ -54,6 +54,7 @@ void main() {
         discard;
     }
     vec3 lightmap = lm2rgb(lmcoord, ao, skyColor, dist);
+    vec3 ambient = getAmbient(dist, ao);
 
     float threshold = getThreshold(noisetex, alphaOff, frameCounter);
     float alpha = albedo.a >= threshold ? 1.0 : 0.0;
@@ -66,7 +67,7 @@ void main() {
         albedo.rgb *= glcolor.rgb;
     }
 
-    vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal);
+    vec3 col = shadeDiffuse(albedo.rgb, lightmap, normal, ambient);
 
     float fade = distanceFade(dist);
     alpha *= fade;
