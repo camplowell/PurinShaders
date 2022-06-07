@@ -12,6 +12,7 @@ out vec2 lmcoord;
 out vec3 normal;
 
 out vec3 viewPos;
+out vec3 viewPos_prev;
 out vec4 clipPos_prev;
 
 out vec3 alphaOffset;
@@ -41,7 +42,7 @@ uniform vec3 upPosition;
 
 void main() {
     viewPos = model2view();
-    vec3 viewPos_prev = viewPos - at_velocity;
+    viewPos_prev = viewPos - at_velocity;
     gl_Position = panini(viewPos, upPosition);
     clipPos_prev = panini(viewPos_prev, upPosition);
     gl_Position = jitter(gl_Position);

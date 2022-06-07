@@ -13,6 +13,7 @@ out vec3 normal;
 out float ao;
 
 out vec3 viewPos;
+out vec3 viewPos_prev;
 out vec4 clipPos_prev;
 
 in vec3 mc_Entity;
@@ -57,9 +58,11 @@ void main() {
 
     // Bring back to view space
     viewPos = feet2view(feetPos);
-    vec3 viewPos_prev = feet2view(feetPos_prev, gbufferPreviousModelView);
+    viewPos_prev = feet2view(feetPos_prev, gbufferPreviousModelView);
 
-    clipPos_prev = panini(viewPos_prev, upPosition);
+    vec3 up_prev = 100 * eye2view(vec3(0, 1, 0), gbufferPreviousModelView);
+    clipPos_prev = panini(viewPos_prev, up_prev);
+    
     gl_Position = panini(viewPos, upPosition);
     gl_Position = jitter(gl_Position);
 

@@ -93,17 +93,32 @@ vec3 waterFog(vec3 col, vec3 skyLight, float opticalDepth) {
 }
 
 float getAvgDensity(float yStart, float yEnd, float falloff) {
-    float yMin = max(min(yStart, yEnd) / falloff, 0);
-    float yMax = max(max(yStart, yEnd) / falloff, 0);
+    float yMin = min(yStart, yEnd) / falloff;
+    float yMax = max(yStart, yEnd) / falloff;
+    if (yMax <= 0) {
+        return 1.0;
+    }
+    float weight = 0.0;
+    if (yMin < 0.0) {
+        weight = -yMin / (yMax - yMin);
+        yMin = 0.0;
+    }
     if (yMin == yMax) {
         return exp(-yMin);
     }
-    return (exp(-yMin) - exp(-yMax)) / (yMax - yMin);
+    return mix((exp(-yMin) - exp(-yMax)) / (yMax - yMin), 1.0, weight);
 }
-
+/*
 vec3 skyTonemap(vec3 col) {
     float lum = dot(col, vec3(0.299, 0.587, 0.114));
     return col * lum / (1 + lum * lum);
+}
+*/
+vec3 screen(vec3 albedo, vec3 lighting, vec3 fac) {
+    lighting *= 1.0 - fac;
+    float lum = dot(lighting, vec3(0.299, 0.587, 0.114));
+    return (lighting * lum + albedo) / (1 + lum * lum);
+    //return 1 - ((1 - albedo * fac) / (1.0 + lighting * (1.0 - fac)));
 }
 
 vec3 skyFog(vec3 col, vec3 skyLight, vec3 viewDir, float enter, float exit) {
@@ -121,9 +136,11 @@ vec3 skyFog(vec3 col, vec3 skyLight, vec3 viewDir, float enter, float exit) {
     vec3 sunCol = mix(mixByTime(SUN_COL, worldTime), vec3(0.5), rainStrength);
     vec3 moonCol = mix(MOON_COL, vec3(1.0), rainStrength);
 
-    sunCol *= smoothstep(-0.08, 0.02, sunDir.y);
-    moonCol *= smoothstep(-0.08, 0.02, -sunDir.y);
+    float skyVisibility = eyeBrightnessSmooth.y / 240.0;
+    sunCol *= smoothstep(-0.08, 0.02, sunDir.y) * skyVisibility;
+    moonCol *= smoothstep(-0.08, 0.02, -sunDir.y) * skyVisibility;
     vec3 horizonCol = moonCol * 0.33 + sunCol + skyLight;
+
     
     sunCol *= pow(dot(viewDir, sunDir) * 0.5 + 0.5, 3) * 3;
     moonCol *= pow(max(dot(viewDir, -sunDir), 0), 2) * 0.25;
@@ -148,5 +165,5 @@ vec3 skyFog(vec3 col, vec3 skyLight, vec3 viewDir, float enter, float exit) {
     mieDepth *= (1.0 - max(rainStrength, wetness));
 
     vec3 atmFac = exp(-(mistDepth + mieDepth * vec3(0.25, 0.5, 1.0)));
-    return skyTonemap((1 - atmFac) * fogCol) + col * atmFac;
+    return screen(col, fogCol, atmFac); //skyTonemap((1 - atmFac) * fogCol) + col * atmFac;
 }

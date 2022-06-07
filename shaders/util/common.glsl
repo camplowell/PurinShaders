@@ -14,9 +14,9 @@ const vec4 colortex1ClearColor = vec4(2048, 2048, 2048, 2048);
 const int colortex2Format = R32F;
 const vec4 colortex2ClearColor = vec4(2048, 2048, 2048, 2048);
 // Colortex3: velocity
-const int colortex3Format = RG16F;
+const int colortex3Format = RGB16F;
 // Colortex5: history
-const int colortex5Format = RGB16;
+const int colortex5Format = RGBA16;
 const bool colortex5Clear = false;
 */
 // ===============================================================================================

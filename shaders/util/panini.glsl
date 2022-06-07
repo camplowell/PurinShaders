@@ -10,7 +10,7 @@ vec4 panini(vec3 viewPos, vec3 upPosition) {
     return view2clip(viewPos);
 }
 
-vec3 paniniInverse(vec3 paniniPos) {
+vec3 paniniInverse(vec3 paniniPos, vec3 upPosition) {
     return ndc2view(paniniPos);
 }
 
@@ -28,9 +28,9 @@ vec3 warpView(vec3 viewPos, float vFac, float factor) {
     return warp * dist;
 }
 
-float getPaniniScale(float vfac, float factor) {
+float getPaniniScale(float vFac, float factor) {
     vec3 corner = ndc2view(vec3(1));
-    corner /= length(corner);
+    corner /= length(corner * vec3(1, max(0, vFac), 1));
     return (corner.z - factor) / corner.z;
 }
 
@@ -39,7 +39,7 @@ float intersect(vec3 dir, float zOff, float vFac) {
     // a = vD^2
     // b = 2OvD
     // c = O^2 - 1
-    vec3 vD = dir * vec3(1, vFac, 1);
+    vec3 vD = dir * vec3(min(1.0, vFac + 1.0), max(0, vFac), 1);
     float a = dot(vD, vD);
     float b = 2 * zOff * vD.z;
     float c = zOff * zOff - 1;
@@ -52,13 +52,20 @@ float intersect(vec3 dir, float zOff, float vFac) {
 }
 
 vec4 panini(vec3 viewPos, vec3 upPosition) {
+
+#if DISTORT_DOWN == 1
     float vFac = abs(0.01 * upPosition.z);
+#else
+    float vFac = -0.01 * upPosition.z;
+#endif
+    
+    vFac *= abs(vFac);
     float scale = getPaniniScale(vFac, PANINI_OFF);
     // Capture ray length
     float dist = length(viewPos);
 
     // Project onto distortion surface
-    vec3 warpPos = viewPos / length(vec3(viewPos.xz, vFac * viewPos.y));
+    vec3 warpPos = viewPos / length(viewPos * vec3(min(1.0, vFac + 1.0), max(0, vFac), 1));
     warpPos -= vec3(0, 0, PANINI_OFF);
 
     // Restore ray length
@@ -72,7 +79,14 @@ vec4 panini(vec3 viewPos, vec3 upPosition) {
 }
 
 vec3 paniniInverse(vec3 ndc, vec3 upPosition) {
+
+#if DISTORT_DOWN == 1
     float vFac = abs(0.01 * upPosition.z);
+#else
+    float vFac = -0.01 * upPosition.z;
+#endif
+
+    vFac *= abs(vFac);
     float scale = getPaniniScale(vFac, PANINI_OFF);
     ndc.xy /= scale;
 

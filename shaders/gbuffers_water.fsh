@@ -13,6 +13,7 @@ in  vec3 normal;
 in  float ao;
 
 in  vec3 viewPos;
+in  vec3 viewPos_prev;
 in  vec4 clipPos_prev;
 
 in  float blockId;
@@ -75,8 +76,8 @@ void main() {
     gl_FragData[1] = vec4(vec3(dist), alpha);
     gl_FragData[2] = vec4(vec3(dist), isWater);
 
-    vec2 offset = getOffset(clipPos_prev);
-    gl_FragData[3] = vec4(offset, 0, alpha);
+    vec3 offset = getOffset(clipPos_prev, dist, length(viewPos_prev));
+    gl_FragData[3] = vec4(offset, alpha);
 }
 
 // Helper implementations ------------------------------------------------------------------------

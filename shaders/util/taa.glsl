@@ -14,10 +14,10 @@ vec3 view2prev(vec3 viewPos) {
 }
 
 #if defined FRAGMENT
-vec2 getOffset(vec4 clipPos_prev) {
+vec3 getOffset(vec4 clipPos_prev, float depth, float prevDepth) {
     vec2 screenPos = vec2(gl_FragCoord.xy / vec2(viewWidth, viewHeight));
     vec2 screenPos_prev = (clipPos_prev.xy / clipPos_prev.w) * 0.5 + 0.5;
-    return screenPos_prev - screenPos;
+    return vec3(screenPos_prev - screenPos, prevDepth - depth);
 }
 #endif
 

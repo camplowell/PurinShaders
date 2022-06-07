@@ -37,10 +37,10 @@ void main() {
 
     vec4 clipPos_prev = panini(view_prev, upPosition);
     vec2 screenPos_prev = (clipPos_prev.xy / clipPos_prev.w);
-    vec2 offset = getOffset(clipPos_prev);
+    vec3 offset = getOffset(clipPos_prev, 1, 1);
     
     gl_FragData[0] = vec4(0.5 * skyColor, 1.0);
-    gl_FragData[1] = vec4(offset, 0, 1.0);
+    gl_FragData[1] = vec4(offset, 1.0);
 }
 
 // Helper implementations ------------------------------------------------------------------------

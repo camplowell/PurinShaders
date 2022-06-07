@@ -13,6 +13,7 @@ in  vec3 normal;
 in  float ao;
 
 in  vec3 viewPos;
+in  vec3 viewPos_prev;
 in  vec4 clipPos_prev;
 
 // Uniforms --------------------------------------------------------------------------------------
@@ -55,8 +56,8 @@ void main() {
     gl_FragData[0] = vec4(col, albedo.a);
     gl_FragData[1] = vec4(vec3(dist), albedo.a);
 
-    vec2 offset = getOffset(clipPos_prev);
-    gl_FragData[2] = vec4(offset, 0, albedo.a);
+    vec3 offset = getOffset(clipPos_prev, dist, length(viewPos_prev));
+    gl_FragData[2] = vec4(offset, albedo.a);
 }
 
 // Helper implementations ------------------------------------------------------------------------

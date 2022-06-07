@@ -12,6 +12,7 @@ out vec2 lmcoord;
 out vec3 normal;
 
 out vec3 viewPos;
+out vec3 viewPos_prev;
 out vec4 clipPos_prev;
 
 in vec3 at_velocity;
@@ -38,9 +39,11 @@ uniform vec3 upPosition;
 
 void main() {
     viewPos = model2view();
-    vec3 viewPos_prev = viewPos - at_velocity;
+    viewPos_prev = viewPos - at_velocity;
+    
     gl_Position = view2clip(viewPos, gl_ProjectionMatrix);
     clipPos_prev = view2clip(viewPos_prev, gl_ProjectionMatrix);
+
     gl_Position = jitter(gl_Position);
 
     texcoord = modelTexcoord();

@@ -13,6 +13,7 @@ out vec3 normal;
 out float ao;
 
 out vec3 viewPos;
+out vec3 viewPos_prev;
 out vec4 clipPos_prev;
 
 out float blockId;
@@ -43,10 +44,12 @@ uniform vec3 upPosition;
 
 void main() {
     viewPos = model2view();
-    vec3 viewPos_prev = view2prev(viewPos);
+    viewPos_prev = view2prev(viewPos);
     gl_Position = panini(viewPos, upPosition);
     gl_Position = jitter(gl_Position);
-    clipPos_prev = panini(viewPos_prev, upPosition);
+    
+    vec3 up_prev = 100 * eye2view(vec3(0, 1, 0), gbufferPreviousModelView);
+    clipPos_prev = panini(viewPos_prev, up_prev);
 
     texcoord = modelTexcoord();
     glcolor = vec4(gl_Color.rgb, 1.0);

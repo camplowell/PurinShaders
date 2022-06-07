@@ -53,9 +53,9 @@ void main() {
 
     vec3 viewPos_prev = view2prev(viewPos);
     vec4 clipPos_prev = panini(viewPos_prev, upPosition);
-    vec2 offset = getOffset(clipPos_prev);
+    vec3 offset = getOffset(clipPos_prev, dist, length(viewPos_prev));
     
-    gl_FragData[2] = vec4(offset, 0, 1);
+    gl_FragData[2] = vec4(offset, 1);
 }
 
 // Helper implementations ------------------------------------------------------------------------

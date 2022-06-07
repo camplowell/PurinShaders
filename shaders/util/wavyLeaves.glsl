@@ -13,7 +13,7 @@ vec3 wave(vec3 feetPos, float time, vec2 texcoord, vec2 midTexCoord, vec3 mc_Ent
     if (bitfieldExtract(blockId, 13, 1) == 1) {
         flick = 0.0;
     }
-    float windiness = 16.0 / (16 + max(0, worldPos.y - 63));
+    float windiness = 1.0 - (16.0 / (16 + max(0, worldPos.y - 63)));
 
     int weightType = bitfieldExtract(blockId, 10, 3);
     float yFac = 1.0;
@@ -41,10 +41,10 @@ vec3 wave(vec3 feetPos, float time, vec2 texcoord, vec2 midTexCoord, vec3 mc_Ent
     fac *= 0.25;
     
     float t = (time + 0.0625 * worldPos.x - 0.125 * yFac * worldPos.y) * timeScale;
-    float gust = cos(5 * t + 0.5 * sin(47 * t)) * sin(3 * t + 0.5 * cos(7 * t));
-    gust = gust * gust + windiness;
+    float gust = cos(5 * t + 0.0625 * worldPos.z + 0.5 * sin(47 * t)) * sin(3 * t + 0.5 * cos(7 * t + 0.125 * worldPos.z));
+    gust = 0.5 * gust * gust + windiness;
      
-    vec2 offset = vec2(sin(83 * t + 0.5 * cos(179 * t + gust * sin(647 * t))), 0.25 * cos(79 * t + gust * sin(181 * t)));
+    vec2 offset = vec2(sin(83 * t + 0.25 * cos(151 * t + gust * sin(647 * t))), 0.25 * cos(79 * t + 0.5 * gust * sin(181 * t)));
     offset = fac * (0.5 * gust * flick * offset + vec2(gust, 0));
     feetPos.xz -= offset;
     feetPos.y += sqrt(1.0 - (offset.x * offset.x + offset.y * offset.y)) - 1.0;
