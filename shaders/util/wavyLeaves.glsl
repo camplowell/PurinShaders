@@ -1,17 +1,26 @@
 #if !defined WAVES
 #define WAVES
 
+#ifdef WAVY_LEAVES
 // ===============================================================================================
 // Large
 // ===============================================================================================
+
+float tiltedSin(float x, float bias) {
+    float s = sin(x);
+    float c = cos(x);
+    float bc = bias + c;
+    return -s * inversesqrt(bc * bc + s * s);
+}
+
 #define PI 3.14159265
 vec3 wave(vec3 feetPos, float time, vec2 texcoord, vec2 midTexCoord, vec3 mc_Entity) {
     vec3 worldPos = feetPos + cameraPosition;
     float timeScale = 36.0 * PI / 3600.0;
     int blockId = int(mc_Entity.x + 0.5);
-    float flick = 1.0;
+    float fast = 1.0;
     if (bitfieldExtract(blockId, 13, 1) == 1) {
-        flick = 0.0;
+        fast = 0.0;
     }
     float windiness = 1.0 - (16.0 / (16 + max(0, worldPos.y - 63)));
 
@@ -41,16 +50,26 @@ vec3 wave(vec3 feetPos, float time, vec2 texcoord, vec2 midTexCoord, vec3 mc_Ent
     fac *= 0.25;
     
     float t = (time + 0.0625 * worldPos.x - 0.125 * yFac * worldPos.y) * timeScale;
-    float gust = cos(5 * t + 0.0625 * worldPos.z + 0.5 * sin(47 * t)) * sin(3 * t + 0.5 * cos(7 * t + 0.125 * worldPos.z));
-    gust = 0.5 * gust * gust + windiness;
-     
-    vec2 offset = vec2(sin(83 * t + 0.25 * cos(151 * t + gust * sin(647 * t))), 0.25 * cos(79 * t + 0.5 * gust * sin(181 * t)));
-    offset = fac * (0.5 * gust * flick * offset + vec2(gust, 0));
+
+    float gust = mix(tiltedSin(11 * t, 0.7), tiltedSin(13 * t, 0.7), sin(worldPos.z * 0.01) * .4 + .5) * 0.5 + 0.5;
+    gust *= mix(0.5 * gust * gust, gust, windiness);
+    fast *= gust;
+    
+    vec2 offset = sin(t * vec2(79, 89) + 0.0625 * vec2(worldPos.z, -worldPos.z)) * 0.5;
+    offset += t * vec2(103, 167) + 0.2 * vec2(offset.y, -offset.x);
+    offset = vec2(tiltedSin(offset.x, 0.5) + 1, sin(offset.y) * 0.5);
+    offset += vec2(tiltedSin(t * 863, 0.25), sin(t * 947)) * fast * 0.125;
+    offset *= 0.5 * gust * fac;
+    
+    //vec2 offset = vec2(gust * fac, 0);
+
     feetPos.xz -= offset;
     feetPos.y += sqrt(1.0 - (offset.x * offset.x + offset.y * offset.y)) - 1.0;
     //feetPos.x -= windiness * fac;
     return feetPos;
 }
+
+#endif
 // Small -----------------------------------------------------------------------------------------
 
 #endif

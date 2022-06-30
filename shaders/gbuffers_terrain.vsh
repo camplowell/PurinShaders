@@ -53,9 +53,10 @@ void main() {
     ao = gl_Color.a;
 
     // Wavy blocks
+#ifdef WAVY_LEAVES
     feetPos = wave(feetPos, frameTimeCounter, texcoord, mc_midTexCoord, mc_Entity);
     feetPos_prev = wave(feetPos_prev, frameTimeCounter - frameTime, texcoord, mc_midTexCoord, mc_Entity);
-
+#endif
     // Bring back to view space
     viewPos = feet2view(feetPos);
     viewPos_prev = feet2view(feetPos_prev, gbufferPreviousModelView);
